@@ -15,7 +15,7 @@ let env = {
   TEAM_ID: false
 };
 
-const askForData = async() => {
+const promptForEnv = async() => {
   const promptSchema = [{
       name: 'DEPLOYMENT_ID',
       description: colors.magenta('Desired deployment id from where to download: '),
@@ -45,7 +45,7 @@ const askForData = async() => {
   })
 };
 
-const appendTeamId = url => env.TEAM_ID ?  `${url}?teamId=${env.TEAM_ID}` : env.DEPLOYMENT_URL;
+const appendTeamId = url => env.TEAM_ID ?  `${url}?teamId=${env.TEAM_ID}` : url;
 
 const generateDirectory = (path) => {
   try {
@@ -63,12 +63,11 @@ const generateFile = async (fileId, fileName, currentPath) => {
   try {
     const savePath = join(currentPath, fileName);
     console.log('Downloading file: ', fileName, ' to path: ', savePath);
-    const file = await axios.get(url, {
+    const { data } = await axios.get(url, {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    const { data, ...rest } = file;
     const saveData = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
 
     writeFile(savePath, saveData, 'utf-8', fileWriteCallback);
@@ -91,8 +90,8 @@ const parseStructure = (folderStructure, currentPath) => {
   folderStructure.forEach(structure => parseCurrent(structure, currentPath));
 };
 
-const main = async () => {
-  env = await askForData();
+(async () => {
+  env = await promptForEnv();
   env.DEPLOYMENT_URL = `https://api.zeit.co/v5/now/deployments/${env.DEPLOYMENT_ID}/files`;
   const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL);
 
@@ -107,6 +106,4 @@ const main = async () => {
   } catch (err) {
     console.log(err);
   }
-};
-
-main();
+})();
