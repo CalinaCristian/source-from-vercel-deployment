@@ -1,6 +1,6 @@
 {
   "name": "source-from-zeit-deployment",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "A simple package made for downloading the source code from your Zeit Deployment.",
   "main": "dist/index.js",
   "scripts": {
@@ -12,9 +12,11 @@
   "dependencies": {
     "axios": "0.18.0",
     "colors": "1.3.3",
+    "fuzzy": "^0.1.3",
+    "inquirer": "6.2.2",
+    "inquirer-autocomplete-prompt": "^1.0.1",
     "mkdirp": "0.5.1",
-    "path": "0.12.7",
-    "prompt": "1.0.0"
+    "path": "0.12.7"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",

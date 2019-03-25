@@ -3,107 +3,75 @@
 
 var _axios = _interopRequireDefault(require("axios"));
 
-var _path = require("path");
-
-var _fs = require("fs");
-
-var _mkdirp = _interopRequireDefault(require("mkdirp"));
-
-var _prompt = _interopRequireDefault(require("prompt"));
-
 var _colors = _interopRequireDefault(require("colors"));
+
+var _prompts = require("./prompts");
+
+var _utils = require("./utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-let env = {
-  DEPLOYMENT_ID: '',
-  DEPLOYMENT_URL: '',
-  AUTHORIZATION_TOKEN: '',
-  OUTPUT_DIRECTORY: './deployment_source',
-  TEAM_ID: false
-};
-
-const promptForEnv = async () => {
-  const promptSchema = [{
-    name: 'DEPLOYMENT_ID',
-    description: _colors.default.magenta('Desired deployment id from where to download: '),
-    required: true
-  }, {
-    name: 'AUTHORIZATION_TOKEN',
-    description: _colors.default.magenta('Authorization token (Example: Bearer <Token>)'),
-    required: true
-  }, {
-    name: 'TEAM_ID',
-    description: _colors.default.magenta('What is your team id? (Default: false - personal deployment)')
-  }, {
-    name: 'OUTPUT_DIRECTORY',
-    description: _colors.default.magenta('Where do you want the source to be downloaded ? (Default: ./deployment_source)')
-  }];
-
-  _prompt.default.start();
-
-  return new Promise((res, rej) => {
-    _prompt.default.get(promptSchema, (err, results) => {
-      if (err) {
-        rej(err);
-      }
-
-      results.OUTPUT_DIRECTORY = results.OUTPUT_DIRECTORY || env.OUTPUT_DIRECTORY;
-      results.TEAM_ID = results.TEAM_ID || env.TEAM_ID;
-      res(results);
-    });
-  });
-};
-
-const appendTeamId = url => env.TEAM_ID ? `${url}?teamId=${env.TEAM_ID}` : url;
-
-const generateDirectory = path => {
+const getTeamId = async token => {
   try {
-    (0, _mkdirp.default)(path);
+    const {
+      data: {
+        teams = []
+      }
+    } = await _axios.default.get('https://api.zeit.co/v1/teams', {
+      headers: {
+        Authorization: token
+      }
+    });
+    return await (0, _prompts.promptForTeam)([{
+      name: 'Personal project (NO TEAM)',
+      id: false
+    }, ...teams]);
   } catch (err) {
-    console.log(err);
+    console.log(console.log(_colors.default.red('Cannot download teams list. Please check your authorization token !')));
+    process.exit(0);
   }
 };
 
-const fileWriteCallback = err => err && console.log(err);
-
-const generateFile = async (fileId, fileName, currentPath) => {
-  const url = appendTeamId(`${env.DEPLOYMENT_URL}/${fileId}`);
-
+const getUidFromName = async env => {
   try {
-    const savePath = (0, _path.join)(currentPath, fileName);
-    console.log('Downloading file: ', fileName, ' to path: ', savePath);
     const {
-      data
-    } = await _axios.default.get(url, {
+      data: {
+        deployments = []
+      }
+    } = await _axios.default.get((0, _utils.appendTeamId)(`https://api.zeit.co/v3/now/deployments`, env.TEAM_ID), {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    const saveData = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
-    (0, _fs.writeFile)(savePath, saveData, 'utf-8', fileWriteCallback);
+
+    if (!deployments.length > 0) {
+      console.log(_colors.default.red('No deployments found for your choices. Exiting...'));
+      process.exit();
+    }
+
+    const projectName = await (0, _prompts.promptForProjectName)([...new Set(deployments.map(project => project.name))]);
+    console.log(`Getting list of deployments for ${projectName}`);
+    return await (0, _prompts.promptForProjectUrl)(deployments.filter(deployment => deployment.name === projectName));
   } catch (err) {
     console.log(err);
   }
 };
 
-const parseCurrent = (node, currentPath) => {
-  if (node.type === 'directory') {
-    parseStructure(node.children, (0, _path.join)(currentPath, node.name));
-    generateDirectory((0, _path.join)(currentPath, node.name));
-  } else if (node.type === 'file') {
-    generateFile(node.uid, node.name, currentPath);
-  }
-};
-
-const parseStructure = (folderStructure, currentPath) => {
-  folderStructure.forEach(structure => parseCurrent(structure, currentPath));
-};
-
 (async () => {
-  env = await promptForEnv();
-  env.DEPLOYMENT_URL = `https://api.zeit.co/v5/now/deployments/${env.DEPLOYMENT_ID}/files`;
-  const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL);
+  let env = {
+    DEPLOYMENT_URL: '',
+    AUTHORIZATION_TOKEN: '',
+    OUTPUT_DIRECTORY: './deployment_source',
+    TEAM_ID: false
+  };
+  env.AUTHORIZATION_TOKEN = (0, _utils.getAuthToken)((await (0, _prompts.promptForAuthorizationToken)()));
+  console.log(_colors.default.yellow('Getting list of teams...'));
+  env.TEAM_ID = await getTeamId(env.AUTHORIZATION_TOKEN);
+  console.log(_colors.default.yellow('Getting list of deployments...This might take a while...'));
+  env.DEPLOYMENT_URL = `https://api.zeit.co/v5/now/deployments/${await getUidFromName(env)}/files`;
+  env.OUTPUT_DIRECTORY = (await (0, _prompts.promptForOutputDirectory)()) || env.OUTPUT_DIRECTORY;
+  console.log(_colors.default.yellow('Starting the process of recreating the structure...'));
+  const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID);
 
   try {
     const {
@@ -113,7 +81,7 @@ const parseStructure = (folderStructure, currentPath) => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    parseStructure(data, env.OUTPUT_DIRECTORY);
+    (0, _utils.parseStructure)(data, env.OUTPUT_DIRECTORY, env);
   } catch (err) {
     console.log(err);
   }

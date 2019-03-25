@@ -22,22 +22,20 @@ To install it, simply run
 
 To run and download you're source code, you will be prompted for the following:
 
-* __DEPLOYMENT_ID__:
-  * Description: The deployment that you want to download from.
-  * How to find it:
-    * GET /v3/now/deployments with authorization token set. [docs here](https://zeit.co/docs/api#endpoints/deployments/list-deployments)
-    * Search in the results for the name that matches the deployment hash and get the uid.
 * __AUTHORIZATION_TOKEN__:
   * Description: It's in this format - '__Bearer _authorization-token___'
   * How to find it:
     * You can check the network tab when you're logged in on zeit and get the authorization token from there
-* __TEAM_ID__:
-  * Description: __OPTIONAL__ It's in the format - '__team\_<id-for-team>__'
-  * How to find it: 
-    * You can check the network tab when you're on your team's project and get the teamid from a request made.
-* __OUTPUT_DIRECTORY__:
-  * Description: __OPTIONAL__ Where you want your deployment source to be placed
-  * Default value: './deployment_source'
+    * You can paste it in any format ("Bearer token" or "bearer token" or "token").
+* __Choose Team__:
+  * The team that you're project is on (or your personal account)
+  * You can choose Personal project or select from the list of all teams that you are a part of.
+* __Choose Project Name__:
+  * The project that contains the deployment that you whish to download the source for.
+  * You can choose from all the projects from the selected team (or personal account)
+* __Choose OUTPUT_DIRECTORY__:
+  * Where you want your deployment source to be placed
+  * __Default value__: './deployment_source'
 
 ### How to run the command
 
@@ -45,12 +43,8 @@ After installing it globally, you can just type in CLI:
 ```
     source-from-zeit-deployment
 ```
+You will then be prompted for the above mentioned values.
 
 ### Notes
 
-Don't overuse this package.  
-Use it only if you really need it.  
-It's calling the endpoint for every file to download it might take a while and it will do many requests to the api.
-
-### Known issues
-For now it doesn't work to download videos or images. It downloads them but they are corrupted.
+Don't overuse this package. Use it only if you really need it. It's calling the endpoint for every file to download it might take a while and it will do many requests to the api.
