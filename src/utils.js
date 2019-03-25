@@ -48,8 +48,8 @@ const generateDirectory = (path) => {
 
 const parseCurrent = (node, currentPath, env) => {
   if (node.type === 'directory') {
-    parseStructure(node.children, join(currentPath, node.name), env);
     generateDirectory(join(currentPath, node.name));
+    parseStructure(node.children, join(currentPath, node.name), env);
   } else if (node.type === 'file') {
     generateFile(node.uid, node.name, currentPath, env);
   }

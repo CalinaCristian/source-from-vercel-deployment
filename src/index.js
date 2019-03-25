@@ -24,7 +24,7 @@ const getTeamId = async(token) => {
     });
     return await promptForTeam([{name: 'Personal project (NO TEAM)', id: false}, ...teams]);
   } catch (err) {
-    console.log(console.log(colors.red('Cannot download teams list. Please check your authorization token !')));
+    console.log(colors.red('Cannot download teams list. Please check your authorization token !'));
     process.exit(0);
   }
 };

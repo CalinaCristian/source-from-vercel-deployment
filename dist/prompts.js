@@ -82,7 +82,7 @@ const promptForProjectUrl = async projects => {
   } = await _inquirer.default.prompt([{
     type: 'autocomplete',
     name: 'PROJECT_URL',
-    message: 'Choose the project name that you wish to download from',
+    message: 'Choose the deployment that you wish to download from (first is the latest)',
     source: (answersSoFar, input) => {
       return new Promise(resolve => {
         const fuzzyResult = _fuzzy.default.filter(input || '', projects.map(project => project.url));

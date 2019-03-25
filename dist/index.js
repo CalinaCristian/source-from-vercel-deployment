@@ -27,7 +27,7 @@ const getTeamId = async token => {
       id: false
     }, ...teams]);
   } catch (err) {
-    console.log(console.log(_colors.default.red('Cannot download teams list. Please check your authorization token !')));
+    console.log(_colors.default.red('Cannot download teams list. Please check your authorization token !'));
     process.exit(0);
   }
 };
