@@ -33,6 +33,9 @@ To run and download you're source code, you will be prompted for the following:
 * __Choose Project Name__:
   * The project that contains the deployment that you whish to download the source for.
   * You can choose from all the projects from the selected team (or personal account)
+* __Choose Deployment__:
+  * The deployment inside of the project that you whish to download the source for.
+  * You can choose from all the deployments for the chosen project
 * __Choose OUTPUT_DIRECTORY__:
   * Where you want your deployment source to be placed
   * __Default value__: './deployment_source'
