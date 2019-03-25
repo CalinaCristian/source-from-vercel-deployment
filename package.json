@@ -1,6 +1,6 @@
 {
   "name": "source-from-zeit-deployment",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A simple package made for downloading the source code from your Zeit Deployment.",
   "main": "dist/index.js",
   "scripts": {
@@ -27,5 +27,13 @@
   },
   "bin": {
     "source-from-zeit-deployment": "./dist/index.js"
-  }
+  },
+  "keywords": [
+    "zeit",
+    "deployment",
+    "download",
+    "download-zeit-deployment",
+    "next",
+    "zeit-deployment"
+  ]
 }

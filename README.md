@@ -1,4 +1,5 @@
 # Download source from Zeit deployment
+You can find the package on [npm](https://www.npmjs.com/package/source-from-zeit-deployment)
 
 ### Description
 
@@ -11,7 +12,6 @@ You can easily download your code from any deployment that you've had on the pro
 
 ### Installation
 
-You can find the package on [npm](https://www.npmjs.com/package/source-from-zeit-deployment)
 
 To install it, simply run
 ```
