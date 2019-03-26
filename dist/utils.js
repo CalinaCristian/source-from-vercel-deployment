@@ -48,8 +48,8 @@ const generateFile = async (fileId, fileName, currentPath, env) => {
     });
     data.pipe((0, _fs.createWriteStream)(savePath));
   } catch (err) {
-    console.log(console.log(err));
-    console.log(console.log(_colors.default.red('Error while downloading files. Exiting...')));
+    console.log(err);
+    console.log(_colors.default.red('Error while downloading files. Exiting...'));
     process.exit();
   }
 };
@@ -58,7 +58,7 @@ const generateDirectory = path => {
   try {
     (0, _mkdirp.default)(path);
   } catch (err) {
-    console.log(console.log(_colors.default.red(`Cannot write directory on path: ${path} !`)));
+    console.log(_colors.default.red(`Cannot write directory on path: ${path} !`));
     process.exit();
   }
 };

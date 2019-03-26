@@ -31,8 +31,8 @@ const generateFile = async (fileId, fileName, currentPath, env) => {
     });
     data.pipe(createWriteStream(savePath));
   } catch (err) {
-    console.log(console.log(err));
-    console.log(console.log(colors.red('Error while downloading files. Exiting...')));
+    console.log(err);
+    console.log(colors.red('Error while downloading files. Exiting...'));
     process.exit();
   }
 };
@@ -41,7 +41,7 @@ const generateDirectory = (path) => {
   try {
     mkdirp(path);
   } catch (err) {
-    console.log(console.log(colors.red(`Cannot write directory on path: ${path} !`)));
+    console.log(colors.red(`Cannot write directory on path: ${path} !`));
     process.exit();
   }
 };
