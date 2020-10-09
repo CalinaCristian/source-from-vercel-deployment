@@ -18,6 +18,11 @@ To install it, simply run
     npm install -g source-from-zeit-deployment
 ```
 
+Or you can run it without installing using npx
+```
+    npx source-from-zeit-deployment
+```
+
 ### Usage
 
 To run and download you're source code, you will be prompted for the following:
