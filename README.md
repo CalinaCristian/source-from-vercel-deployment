@@ -13,15 +13,24 @@ You can easily download your code from any deployment that you've had on the pro
 ### Installation
 
 
-To install it, simply run
+To install it (not required if you use npx), simply run
 ```
     npm install -g source-from-zeit-deployment
+```
+
+### How to run the command
+
+After installing it globally, you can just type in CLI:
+```
+    source-from-zeit-deployment
 ```
 
 Or you can run it without installing using npx
 ```
     npx source-from-zeit-deployment
 ```
+
+You will then be prompted for the above mentioned values.
 
 ### Usage
 
@@ -45,13 +54,6 @@ To run and download you're source code, you will be prompted for the following:
   * Where you want your deployment source to be placed
   * __Default value__: './deployment_source'
 
-### How to run the command
-
-After installing it globally, you can just type in CLI:
-```
-    source-from-zeit-deployment
-```
-You will then be prompted for the above mentioned values.
 
 ### Notes
 
