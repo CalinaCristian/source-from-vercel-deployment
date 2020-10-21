@@ -30,7 +30,7 @@ Or you can run it without installing using npx
     npx source-from-zeit-deployment
 ```
 
-You will then be prompted for the above mentioned values.
+You will then be prompted for the bellow mentioned values.
 
 ### Usage
 
