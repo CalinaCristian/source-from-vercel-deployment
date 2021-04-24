@@ -1,6 +1,6 @@
 {
   "name": "source-from-vercel-deployment",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A simple package made for downloading the source code from your Vercel Deployment.",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "bump:pre": "npm run bump -- premajor --preid=r.c -m  \"chore: bump version\"",
     "bump": "npm run npm-version -- patch -m  \"chore: bump version\"",
     "bump:minor": "npm run bump -- minor -m  \"chore: bump version\"",
-    "bump: major": "npm run bump -- major -m \"chore: bump version\"", 
+    "bump: major": "npm run bump -- major -m \"chore: bump version\"",
     "update-changelog": "npx auto-changelog --commit-limit false --sort-commits date-desc --template ./changelog.hbs",
     "build": "babel src --out-dir dist",
     "version": "npm run build",
