@@ -1,11 +1,25 @@
 {
   "name": "source-from-vercel-deployment",
-  "version": "2.1.6",
+  "version": "3.0.0",
   "description": "A simple package made for downloading the source code from your Vercel Deployment.",
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run build && node dist/index.js",
-    "build": "babel src --out-dir dist"
+    "npm-version": "npm version",
+    "bump:pre": "npm run bump -- premajor --preid=r.c -m  \"chore: bump version\"",
+    "bump": "npm run npm-version -- patch -m  \"chore: bump version\"",
+    "bump:minor": "npm run bump -- minor -m  \"chore: bump version\"",
+    "bump: major": "npm run bump -- major -m \"chore: bump version\"", 
+    "update-changelog": "npx auto-changelog --commit-limit false --sort-commits date-desc --template ./changelog.hbs",
+    "build": "babel src --out-dir dist",
+    "version": "npm run build",
+    "postversion": "npm run update-changelog && git add CHANGELOG.md && git commit --amend --no-edit && git push --tags"
+  },
+  "auto-changelog": {
+    "replaceText": {
+      "^(.*)(?<!\\)): (.*)": "* **$1** $2",
+      "^.*\\((.*)\\): (.*)": "* **$1** $2"
+    }
   },
   "author": "Cristian Calina",
   "license": "MIT",

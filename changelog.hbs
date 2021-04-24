@@ -1,0 +1,7 @@
+{{#each releases}}
+  # {{title}} ({{isoDate}})
+  {{#commit-list commits heading='' exclude='bump version'}}
+    {{#if commit.breaking}}**BREAKING CHANGE:** {{/if}}{{subject}}
+  {{/commit-list}}
+
+{{/each}}
