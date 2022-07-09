@@ -8,7 +8,7 @@
     "npm-version": "npm version",
     "bump:pre": "npm run bump -- premajor --preid=r.c -m  \"chore: bump version\"",
     "bump": "npm run npm-version -m  \"chore: bump version\"",
-    "bump:patch": "npm run npm-version -- patch",
+    "bump:patch": "npm run bump -- patch",
     "bump:minor": "npm run bump -- minor",
     "bump:major": "npm run bump -- major",
     "update-changelog": "npx auto-changelog --commit-limit false --sort-commits date-desc --template ./changelog.hbs",
