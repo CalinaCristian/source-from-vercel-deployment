@@ -1,3 +1,7 @@
+# v4.0.1 (2022-07-09)
+
+* **fix** update deployment list endpoint
+
 # v4.0.0 (2022-07-09)
 
 * **chore** fix versioning scripts
