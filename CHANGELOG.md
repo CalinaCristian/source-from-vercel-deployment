@@ -1,3 +1,8 @@
+# v4.0.2 (2022-07-09)
+
+* **fix** team id append symbol
+* **chore** fix patch bump message
+
 # v4.0.1 (2022-07-09)
 
 * **fix** update deployment list endpoint

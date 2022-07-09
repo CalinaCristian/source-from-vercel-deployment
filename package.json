@@ -1,6 +1,6 @@
 {
   "name": "source-from-vercel-deployment",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A simple package made for downloading the source code from your Vercel Deployment.",
   "main": "dist/index.js",
   "scripts": {
