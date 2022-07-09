@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.parseStructure = exports.appendTeamId = exports.getAuthToken = void 0;
+exports.parseStructure = exports.getAuthToken = exports.appendTeamId = void 0;
 
 var _colors = _interopRequireDefault(require("colors"));
 

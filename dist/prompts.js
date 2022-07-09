@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.promptForOutputDirectory = exports.promptForProjectUrl = exports.promptForProjectName = exports.promptForTeam = exports.promptForAuthorizationToken = void 0;
+exports.promptForTeam = exports.promptForProjectUrl = exports.promptForProjectName = exports.promptForOutputDirectory = exports.promptForAuthorizationToken = void 0;
 
 var _colors = _interopRequireDefault(require("colors"));
 

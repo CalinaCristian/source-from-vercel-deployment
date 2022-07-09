@@ -75,14 +75,12 @@ const getUidFromName = async env => {
 
   try {
     const {
-      data,
-      ...res
+      data
     } = await _axios.default.get(getDeploymentStructureURL, {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    console.log(res);
     (0, _utils.parseStructure)(data, env.OUTPUT_DIRECTORY, env);
   } catch (err) {
     console.log(err);
