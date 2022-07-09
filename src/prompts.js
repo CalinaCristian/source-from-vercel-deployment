@@ -1,6 +1,6 @@
-import inquirer from 'inquirer';
 import colors from 'colors';
 import fuzzy from 'fuzzy';
+import inquirer from 'inquirer';
 
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
 
@@ -9,7 +9,7 @@ export const promptForAuthorizationToken = async() => {
     {
       type: 'input',
       name: 'AUTHORIZATION_TOKEN',
-      message: colors.magenta('Authorization token (can be \'Bearer token\' or \'bearer token\' or \'token\')')
+      message: colors.magenta('Authorization token (Generate one here https://vercel.com/account/tokens and save it to env variable VERCEL_AUTH_TOKEN to not be asked anymore or paste it here)'),
     }
   ]);
 
@@ -21,7 +21,7 @@ export const promptForTeam = async(teams) => {
     type: 'autocomplete',
     name: 'TEAM_ID',
     message: 'Choose the team that your project is in (or Personal Project if it\'s not in a team)',
-    source: (answersSoFar, input) => {
+    source: (_, input) => {
       return new Promise((resolve) => {
         const fuzzyResult = fuzzy.filter(input || '', teams.map(project => project.name));
         resolve(

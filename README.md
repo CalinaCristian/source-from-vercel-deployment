@@ -37,10 +37,8 @@ You will then be prompted for the bellow mentioned values.
 To run and download you're source code, you will be prompted for the following:
 
 * __AUTHORIZATION_TOKEN__:
-  * Description: It's in this format - '__Bearer _authorization-token___'
-  * How to find it:
-    * You can check the network tab when you're logged in on vercel and get the authorization token from there
-    * You can paste it in any format ("Bearer token" or "bearer token" or "token").
+  * You can generate one [here](https://vercel.com/account/tokens)
+  * You can save the generated token in your Environmental Variables with the key **VERCEL_AUTH_TOKEN** so you won't be asked for it from the script.
 * __Choose Team__:
   * The team that you're project is on (or your personal account)
   * You can choose Personal project or select from the list of all teams that you are a part of.

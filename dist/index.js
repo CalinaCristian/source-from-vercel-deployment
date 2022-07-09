@@ -17,7 +17,7 @@ const getTeamId = async token => {
       data: {
         teams = []
       }
-    } = await _axios.default.get('https://api.vercel.com/v1/teams', {
+    } = await _axios.default.get('https://vercel.com/api/v2/teams', {
       headers: {
         Authorization: token
       }
@@ -38,7 +38,7 @@ const getUidFromName = async env => {
       data: {
         deployments = []
       }
-    } = await _axios.default.get((0, _utils.appendTeamId)(`https://api.vercel.com/v6/now/deployments`, env.TEAM_ID), {
+    } = await _axios.default.get((0, _utils.appendTeamId)(`https://vercel.com/api/v6/deployments`, env.TEAM_ID), {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
@@ -64,23 +64,25 @@ const getUidFromName = async env => {
     OUTPUT_DIRECTORY: './deployment_source',
     TEAM_ID: false
   };
-  env.AUTHORIZATION_TOKEN = (0, _utils.getAuthToken)((await (0, _prompts.promptForAuthorizationToken)()));
+  env.AUTHORIZATION_TOKEN = (0, _utils.getAuthToken)(process.env.VERCEL_AUTH_TOKEN ?? (await (0, _prompts.promptForAuthorizationToken)()));
   console.log(_colors.default.yellow('Getting list of teams...'));
   env.TEAM_ID = await getTeamId(env.AUTHORIZATION_TOKEN);
   console.log(_colors.default.yellow('Getting list of deployments...This might take a while...'));
-  env.DEPLOYMENT_URL = `https://api.vercel.com/v5/now/deployments/${await getUidFromName(env)}/files`;
+  env.DEPLOYMENT_URL = `https://vercel.com/api/v6/deployments/${await getUidFromName(env)}/files`;
   env.OUTPUT_DIRECTORY = (await (0, _prompts.promptForOutputDirectory)()) || env.OUTPUT_DIRECTORY;
   console.log(_colors.default.yellow('Starting the process of recreating the structure...'));
   const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID);
 
   try {
     const {
-      data
+      data,
+      ...res
     } = await _axios.default.get(getDeploymentStructureURL, {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
+    console.log(res);
     (0, _utils.parseStructure)(data, env.OUTPUT_DIRECTORY, env);
   } catch (err) {
     console.log(err);

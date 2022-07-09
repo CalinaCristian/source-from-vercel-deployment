@@ -5,11 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.promptForOutputDirectory = exports.promptForProjectUrl = exports.promptForProjectName = exports.promptForTeam = exports.promptForAuthorizationToken = void 0;
 
-var _inquirer = _interopRequireDefault(require("inquirer"));
-
 var _colors = _interopRequireDefault(require("colors"));
 
 var _fuzzy = _interopRequireDefault(require("fuzzy"));
+
+var _inquirer = _interopRequireDefault(require("inquirer"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21,7 +21,7 @@ const promptForAuthorizationToken = async () => {
   } = await _inquirer.default.prompt([{
     type: 'input',
     name: 'AUTHORIZATION_TOKEN',
-    message: _colors.default.magenta('Authorization token (can be \'Bearer token\' or \'bearer token\' or \'token\')')
+    message: _colors.default.magenta('Authorization token (Generate one here https://vercel.com/account/tokens and save it to env variable VERCEL_AUTH_TOKEN to not be asked anymore or paste it here)')
   }]);
   return AUTHORIZATION_TOKEN;
 };
@@ -35,7 +35,7 @@ const promptForTeam = async teams => {
     type: 'autocomplete',
     name: 'TEAM_ID',
     message: 'Choose the team that your project is in (or Personal Project if it\'s not in a team)',
-    source: (answersSoFar, input) => {
+    source: (_, input) => {
       return new Promise(resolve => {
         const fuzzyResult = _fuzzy.default.filter(input || '', teams.map(project => project.name));
 
