@@ -8,10 +8,10 @@ export const getAuthToken = token => token.includes('Bearer') || token.includes(
   ? token[0].toUpperCase() + token.slice(1)
   : `bearer ${token}`;
 
-export const appendTeamId = (url, teamId) => teamId ?  `${url}?teamId=${teamId}` : url;
+export const appendTeamId = (url, teamId, symbol = '?') => teamId ?  `${url}${symbol}teamId=${teamId}` : url;
 
 const generateFile = async (fileName, currentPath, env) => {
-  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID);
+  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID, '&');
 
   try {
     const savePath = join(currentPath, fileName);

@@ -76,7 +76,7 @@ const getDeployment = async (env) => {
   env.OUTPUT_DIRECTORY = await promptForOutputDirectory() || env.OUTPUT_DIRECTORY;
 
   console.log(colors.yellow('Starting the process of recreating the structure...'));
-  const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL, env.TEAM_ID);
+  const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL, env.TEAM_ID, '&');
 
   try {
     const { data } = await axios.get(getDeploymentStructureURL, {

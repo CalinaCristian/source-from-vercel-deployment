@@ -80,7 +80,7 @@ const getDeployment = async env => {
   env.DEPLOYMENT_FILE_URL = `https://vercel.com/api/v6/deployments/${deploymentUid}/files/outputs?file=`;
   env.OUTPUT_DIRECTORY = (await (0, _prompts.promptForOutputDirectory)()) || env.OUTPUT_DIRECTORY;
   console.log(_colors.default.yellow('Starting the process of recreating the structure...'));
-  const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID);
+  const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID, '&');
 
   try {
     const {

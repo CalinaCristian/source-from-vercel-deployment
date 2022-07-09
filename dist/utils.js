@@ -21,12 +21,12 @@ const getAuthToken = token => token.includes('Bearer') || token.includes('bearer
 
 exports.getAuthToken = getAuthToken;
 
-const appendTeamId = (url, teamId) => teamId ? `${url}?teamId=${teamId}` : url;
+const appendTeamId = (url, teamId, symbol = '?') => teamId ? `${url}${symbol}teamId=${teamId}` : url;
 
 exports.appendTeamId = appendTeamId;
 
 const generateFile = async (fileName, currentPath, env) => {
-  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID);
+  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID, '&');
 
   try {
     const savePath = (0, _path.join)(currentPath, fileName);
