@@ -43,7 +43,7 @@ export const promptForProjectName = async(projectNames) => {
     type: 'autocomplete',
     name: 'DEPLOYMENT_NAME',
     message: 'Choose the project name that you wish to download from',
-    source: (answersSoFar, input) => {
+    source: (_, input) => {
       return new Promise((resolve) => {
         const fuzzyResult = fuzzy.filter(input || '', projectNames);
         resolve(
@@ -65,13 +65,16 @@ export const promptForProjectUrl = async(projects) => {
     type: 'autocomplete',
     name: 'PROJECT_URL',
     message: 'Choose the deployment that you wish to download from (first is the latest)',
-    source: (answersSoFar, input) => {
+    source: (_, input) => {
       return new Promise((resolve) => {
         const fuzzyResult = fuzzy.filter(input || '', projects.map(project => project.url));
         resolve(
           fuzzyResult.map(result => ({
             name: colors.cyan(result.original),
-            value: projects[projects.findIndex(project => project.url === result.original)].uid
+            value: {
+              deploymentUid: projects[projects.findIndex(project => project.url === result.original)].uid,
+              deploymentUrl: projects[projects.findIndex(project => project.url === result.original)].url,
+            }
           }))
         );
       });

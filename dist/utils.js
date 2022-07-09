@@ -5,15 +5,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.parseStructure = exports.getAuthToken = exports.appendTeamId = void 0;
 
+var _axios = _interopRequireDefault(require("axios"));
+
 var _colors = _interopRequireDefault(require("colors"));
+
+var _fs = require("fs");
 
 var _mkdirp = _interopRequireDefault(require("mkdirp"));
 
 var _path = require("path");
-
-var _axios = _interopRequireDefault(require("axios"));
-
-var _fs = require("fs");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25,15 +25,8 @@ const appendTeamId = (url, teamId) => teamId ? `${url}?teamId=${teamId}` : url;
 
 exports.appendTeamId = appendTeamId;
 
-const fileWriteCallback = path => err => {
-  if (err) {
-    console.log(_colors.default.red(`Error while writing file: ${path}`));
-    process.exit();
-  }
-};
-
-const generateFile = async (fileId, fileName, currentPath, env) => {
-  const url = appendTeamId(`${env.DEPLOYMENT_URL}/${fileId}`, env.TEAM_ID);
+const generateFile = async (fileName, currentPath, env) => {
+  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID);
 
   try {
     const savePath = (0, _path.join)(currentPath, fileName);
@@ -48,8 +41,7 @@ const generateFile = async (fileId, fileName, currentPath, env) => {
     });
     data.pipe((0, _fs.createWriteStream)(savePath));
   } catch (err) {
-    console.log(err);
-    console.log(_colors.default.red('Error while downloading files. Exiting...'));
+    console.log(_colors.default.red(`Cannot download from ${url}. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !`));
     process.exit();
   }
 };
@@ -68,7 +60,7 @@ const parseCurrent = (node, currentPath, env) => {
     generateDirectory((0, _path.join)(currentPath, node.name));
     parseStructure(node.children, (0, _path.join)(currentPath, node.name), env);
   } else if (node.type === 'file') {
-    generateFile(node.uid, node.name, currentPath, env);
+    generateFile(node.name, currentPath, env);
   }
 };
 

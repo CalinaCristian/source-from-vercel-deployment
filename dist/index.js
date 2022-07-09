@@ -5,6 +5,8 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _colors = _interopRequireDefault(require("colors"));
 
+var _mkdirp = _interopRequireDefault(require("mkdirp"));
+
 var _prompts = require("./prompts");
 
 var _utils = require("./utils");
@@ -32,7 +34,7 @@ const getTeamId = async token => {
   }
 };
 
-const getUidFromName = async env => {
+const getDeployment = async env => {
   try {
     const {
       data: {
@@ -53,13 +55,15 @@ const getUidFromName = async env => {
     console.log(`Getting list of deployments for ${projectName}`);
     return await (0, _prompts.promptForProjectUrl)(deployments.filter(deployment => deployment.name === projectName));
   } catch (err) {
-    console.log(err);
+    console.log(_colors.default.red('Cannot get deployment UID. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !'));
+    process.exit(0);
   }
 };
 
 (async () => {
   let env = {
     DEPLOYMENT_URL: '',
+    DEPLOYMENT_FILE_URL: '',
     AUTHORIZATION_TOKEN: '',
     OUTPUT_DIRECTORY: './deployment_source',
     TEAM_ID: false
@@ -68,7 +72,12 @@ const getUidFromName = async env => {
   console.log(_colors.default.yellow('Getting list of teams...'));
   env.TEAM_ID = await getTeamId(env.AUTHORIZATION_TOKEN);
   console.log(_colors.default.yellow('Getting list of deployments...This might take a while...'));
-  env.DEPLOYMENT_URL = `https://vercel.com/api/v6/deployments/${await getUidFromName(env)}/files`;
+  const {
+    deploymentUid,
+    deploymentUrl
+  } = await getDeployment(env);
+  env.DEPLOYMENT_URL = `https://vercel.com/api/file-tree/${deploymentUrl}?base=out`;
+  env.DEPLOYMENT_FILE_URL = `https://vercel.com/api/v6/deployments/${deploymentUid}/files/outputs?file=`;
   env.OUTPUT_DIRECTORY = (await (0, _prompts.promptForOutputDirectory)()) || env.OUTPUT_DIRECTORY;
   console.log(_colors.default.yellow('Starting the process of recreating the structure...'));
   const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID);
@@ -81,8 +90,10 @@ const getUidFromName = async env => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
+    (0, _mkdirp.default)(env.OUTPUT_DIRECTORY);
     (0, _utils.parseStructure)(data, env.OUTPUT_DIRECTORY, env);
   } catch (err) {
-    console.log(err);
+    console.log(_colors.default.red('Cannot recreate the file tree. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !'));
+    process.exit(0);
   }
 })();

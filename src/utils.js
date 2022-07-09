@@ -1,8 +1,8 @@
-import colors from 'colors';
-import mkdirp from "mkdirp";
-import { join } from 'path';
 import axios from 'axios';
+import colors from 'colors';
 import { createWriteStream } from 'fs';
+import mkdirp from 'mkdirp';
+import { join } from 'path';
 
 export const getAuthToken = token => token.includes('Bearer') || token.includes('bearer')
   ? token[0].toUpperCase() + token.slice(1)
@@ -10,15 +10,8 @@ export const getAuthToken = token => token.includes('Bearer') || token.includes(
 
 export const appendTeamId = (url, teamId) => teamId ?  `${url}?teamId=${teamId}` : url;
 
-const fileWriteCallback = path => err => {
-  if (err) {
-    console.log(colors.red(`Error while writing file: ${path}`));
-    process.exit();
-  }
-};
-
-const generateFile = async (fileId, fileName, currentPath, env) => {
-  const url = appendTeamId(`${env.DEPLOYMENT_URL}/${fileId}`, env.TEAM_ID);
+const generateFile = async (fileName, currentPath, env) => {
+  const url = appendTeamId(`${env.DEPLOYMENT_FILE_URL}${fileName}`, env.TEAM_ID);
 
   try {
     const savePath = join(currentPath, fileName);
@@ -31,8 +24,7 @@ const generateFile = async (fileId, fileName, currentPath, env) => {
     });
     data.pipe(createWriteStream(savePath));
   } catch (err) {
-    console.log(err);
-    console.log(colors.red('Error while downloading files. Exiting...'));
+    console.log(colors.red(`Cannot download from ${url}. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !`));
     process.exit();
   }
 };
@@ -51,7 +43,7 @@ const parseCurrent = (node, currentPath, env) => {
     generateDirectory(join(currentPath, node.name));
     parseStructure(node.children, join(currentPath, node.name), env);
   } else if (node.type === 'file') {
-    generateFile(node.uid, node.name, currentPath, env);
+    generateFile(node.name, currentPath, env);
   }
 };
 
