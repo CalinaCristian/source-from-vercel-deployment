@@ -18,7 +18,7 @@ import {
 
 const getTeamId = async(token) => {
   try {
-    const { data: { teams = [] } } = await axios.get('https://api.vercel.com/v1/teams', {
+    const { data: { teams = [] } } = await axios.get('https://vercel.com/api/v2/teams', {
       headers: {
         Authorization: token
       }
@@ -32,7 +32,7 @@ const getTeamId = async(token) => {
 
 const getUidFromName = async (env) => {
   try {
-    const { data: { deployments = [] } } = await axios.get(appendTeamId(`https://api.vercel.com/v6/now/deployments`, env.TEAM_ID), {
+    const { data: { deployments = [] } } = await axios.get(appendTeamId(`https://vercel.com/api/v6/deployments`, env.TEAM_ID), {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
@@ -58,13 +58,13 @@ const getUidFromName = async (env) => {
     OUTPUT_DIRECTORY: './deployment_source',
     TEAM_ID: false
   };
-  env.AUTHORIZATION_TOKEN = getAuthToken(await promptForAuthorizationToken());
+  env.AUTHORIZATION_TOKEN = getAuthToken(process.env.VERCEL_AUTH_TOKEN ?? (await promptForAuthorizationToken()));
 
   console.log(colors.yellow('Getting list of teams...'));
   env.TEAM_ID = await getTeamId(env.AUTHORIZATION_TOKEN);
 
   console.log(colors.yellow('Getting list of deployments...This might take a while...'));
-  env.DEPLOYMENT_URL = `https://api.vercel.com/v5/now/deployments/${await getUidFromName(env)}/files`;
+  env.DEPLOYMENT_URL = `https://vercel.com/api/v6/deployments/${await getUidFromName(env)}/files`;
 
   env.OUTPUT_DIRECTORY = await promptForOutputDirectory() || env.OUTPUT_DIRECTORY;
 
