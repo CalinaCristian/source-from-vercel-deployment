@@ -1,7 +1,6 @@
 import axios from 'axios';
 import colors from 'colors';
-import { createWriteStream } from 'fs';
-import mkdirp from 'mkdirp';
+import fsExtra from 'fs-extra';
 import { join } from 'path';
 
 export const getAuthToken = token => token.includes('Bearer') || token.includes('bearer')
@@ -22,7 +21,7 @@ const generateFile = async (fileName, currentPath, env) => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    data.pipe(createWriteStream(savePath));
+    data.pipe(fsExtra.createWriteStream(savePath));
   } catch (err) {
     console.log(colors.red(`Cannot download from ${url}. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !`));
     process.exit();
@@ -31,7 +30,7 @@ const generateFile = async (fileName, currentPath, env) => {
 
 const generateDirectory = (path) => {
   try {
-    mkdirp(path);
+    fsExtra.mkdirpSync(path);
   } catch (err) {
     console.log(colors.red(`Cannot write directory on path: ${path} !`));
     process.exit();
@@ -48,5 +47,7 @@ const parseCurrent = (node, currentPath, env) => {
 };
 
 export const parseStructure = (folderStructure, currentPath, env) => {
-  folderStructure.forEach(structure => parseCurrent(structure, currentPath, env));
+  if (folderStructure) {
+    folderStructure.forEach(structure => parseCurrent(structure, currentPath, env));
+  }
 };

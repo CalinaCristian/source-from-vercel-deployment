@@ -9,9 +9,7 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _colors = _interopRequireDefault(require("colors"));
 
-var _fs = require("fs");
-
-var _mkdirp = _interopRequireDefault(require("mkdirp"));
+var _fsExtra = _interopRequireDefault(require("fs-extra"));
 
 var _path = require("path");
 
@@ -39,7 +37,7 @@ const generateFile = async (fileName, currentPath, env) => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-    data.pipe((0, _fs.createWriteStream)(savePath));
+    data.pipe(_fsExtra.default.createWriteStream(savePath));
   } catch (err) {
     console.log(_colors.default.red(`Cannot download from ${url}. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !`));
     process.exit();
@@ -48,7 +46,7 @@ const generateFile = async (fileName, currentPath, env) => {
 
 const generateDirectory = path => {
   try {
-    (0, _mkdirp.default)(path);
+    _fsExtra.default.mkdirpSync(path);
   } catch (err) {
     console.log(_colors.default.red(`Cannot write directory on path: ${path} !`));
     process.exit();
@@ -65,7 +63,9 @@ const parseCurrent = (node, currentPath, env) => {
 };
 
 const parseStructure = (folderStructure, currentPath, env) => {
-  folderStructure.forEach(structure => parseCurrent(structure, currentPath, env));
+  if (folderStructure) {
+    folderStructure.forEach(structure => parseCurrent(structure, currentPath, env));
+  }
 };
 
 exports.parseStructure = parseStructure;

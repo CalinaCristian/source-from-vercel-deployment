@@ -88,6 +88,7 @@ const getDeployment = async (env) => {
     mkdirp(env.OUTPUT_DIRECTORY);
     parseStructure(data, env.OUTPUT_DIRECTORY, env);
   } catch (err) {
+    console.log(err.message);
     console.log(colors.red('Cannot recreate the file tree. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !'));
     process.exit(0);
   }
