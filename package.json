@@ -25,7 +25,7 @@
   "author": "Cristian Calina",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.28.0",
     "colors": "^1.4.0",
     "fs-extra": "^11.1.1",
     "fuzzy": "^0.1.3",
