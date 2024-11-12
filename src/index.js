@@ -14,7 +14,7 @@ import {
 import {
   appendTeamId,
   getAuthToken,
-  parseStructure,
+  startDownload,
 } from './utils';
 
 const getTeamId = async(token) => {
@@ -33,7 +33,9 @@ const getTeamId = async(token) => {
 
 const getDeployment = async (env) => {
   try {
-    const { data: { deployments = [] } } = await axios.get(appendTeamId(`https://vercel.com/api/v6/deployments`, env.TEAM_ID), {
+    var teamIdAppended = appendTeamId(`https://vercel.com/api/v6/deployments`, env.TEAM_ID);
+
+    const { data: { deployments = [] } } = await axios.get(`${teamIdAppended}&limit=100`, {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
@@ -62,21 +64,25 @@ const getDeployment = async (env) => {
     OUTPUT_DIRECTORY: './deployment_source',
     TEAM_ID: false
   };
+
+  
   env.AUTHORIZATION_TOKEN = getAuthToken(process.env.VERCEL_AUTH_TOKEN ?? (await promptForAuthorizationToken()));
 
   console.log(colors.yellow('Getting list of teams...'));
   env.TEAM_ID = await getTeamId(env.AUTHORIZATION_TOKEN);
 
   console.log(colors.yellow('Getting list of deployments...This might take a while...'));
-  const { deploymentUid, deploymentUrl } = await getDeployment(env);
-
-  env.DEPLOYMENT_URL = `https://vercel.com/api/file-tree/${deploymentUrl}?base=out`;
-  env.DEPLOYMENT_FILE_URL = `https://vercel.com/api/v6/deployments/${deploymentUid}/files/outputs?file=`;
-
+   const { deploymentUid, deploymentUrl } = await getDeployment(env);
+ 
+  env.deploymentUid = deploymentUid  
+  env.DEPLOYMENT_URL_SHORT = `https://vercel.com/api/file-tree/${deploymentUrl}?base=`;
+  env.DEPLOYMENT_URL = `https://vercel.com/api/file-tree/${deploymentUrl}?base=src`; 
+  
   env.OUTPUT_DIRECTORY = await promptForOutputDirectory() || env.OUTPUT_DIRECTORY;
+ 
 
   console.log(colors.yellow('Starting the process of recreating the structure...'));
-  const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL, env.TEAM_ID, '&');
+  const getDeploymentStructureURL = appendTeamId(env.DEPLOYMENT_URL, env.TEAM_ID, '&'); 
 
   try {
     const { data } = await axios.get(getDeploymentStructureURL, {
@@ -84,9 +90,11 @@ const getDeployment = async (env) => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
-
+    console.log(data);
     mkdirp(env.OUTPUT_DIRECTORY);
-    parseStructure(data, env.OUTPUT_DIRECTORY, env);
+
+   await startDownload("src", env, env.OUTPUT_DIRECTORY);
+
   } catch (err) {
     console.log(err.message);
     console.log(colors.red('Cannot recreate the file tree. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !'));

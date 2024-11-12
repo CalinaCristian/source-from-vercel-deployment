@@ -87,13 +87,21 @@ const promptForProjectUrl = async projects => {
       return new Promise(resolve => {
         const fuzzyResult = _fuzzy.default.filter(input || '', projects.map(project => project.url));
 
-        resolve(fuzzyResult.map(result => ({
-          name: _colors.default.cyan(result.original),
-          value: {
-            deploymentUid: projects[projects.findIndex(project => project.url === result.original)].uid,
-            deploymentUrl: projects[projects.findIndex(project => project.url === result.original)].url
-          }
-        })));
+        resolve(fuzzyResult.map(result => {
+          const projectIndex = projects.findIndex(project => project.url === result.original);
+          const project = projects[projectIndex];
+          const date = project.created || project.createdAt; // use `created` or `createdAt`
+
+          const formattedDate = new Date(date).toLocaleDateString() + ' ' + new Date(date).toLocaleTimeString();
+          return {
+            name: _colors.default.cyan(`${formattedDate} - ${result.original} uid: ${project.uid}`),
+            // display "date - url"
+            value: {
+              deploymentUid: project.uid,
+              deploymentUrl: project.url
+            }
+          };
+        }));
       });
     },
     pageSize: 10

@@ -59,8 +59,7 @@ export const promptForProjectName = async(projectNames) => {
 
   return DEPLOYMENT_NAME;
 };
-
-export const promptForProjectUrl = async(projects) => {
+export const promptForProjectUrl = async (projects) => {
   const { PROJECT_URL } = await inquirer.prompt([{
     type: 'autocomplete',
     name: 'PROJECT_URL',
@@ -69,13 +68,22 @@ export const promptForProjectUrl = async(projects) => {
       return new Promise((resolve) => {
         const fuzzyResult = fuzzy.filter(input || '', projects.map(project => project.url));
         resolve(
-          fuzzyResult.map(result => ({
-            name: colors.cyan(result.original),
-            value: {
-              deploymentUid: projects[projects.findIndex(project => project.url === result.original)].uid,
-              deploymentUrl: projects[projects.findIndex(project => project.url === result.original)].url,
-            }
-          }))
+          fuzzyResult.map(result => {
+            const projectIndex = projects.findIndex(project => project.url === result.original);
+            const project = projects[projectIndex];
+            const date = project.created || project.createdAt;  // use `created` or `createdAt`
+            
+            const formattedDate = new Date(date).toLocaleDateString() + ' ' + new Date(date).toLocaleTimeString();
+            
+
+            return {
+              name: colors.cyan(`${formattedDate} - ${result.original} uid: ${project.uid}`),  // display "date - url"
+              value: {
+                deploymentUid: project.uid,
+                deploymentUrl: project.url,
+              }
+            };
+          })
         );
       });
     },
