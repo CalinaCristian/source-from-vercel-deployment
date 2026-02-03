@@ -36,11 +36,12 @@ const getTeamId = async token => {
 
 const getDeployment = async env => {
   try {
+    var teamIdAppended = (0, _utils.appendTeamId)(`https://vercel.com/api/v6/deployments`, env.TEAM_ID);
     const {
       data: {
         deployments = []
       }
-    } = await _axios.default.get((0, _utils.appendTeamId)(`https://vercel.com/api/v6/deployments`, env.TEAM_ID), {
+    } = await _axios.default.get(`${teamIdAppended}&limit=100`, {
       headers: {
         Authorization: env.AUTHORIZATION_TOKEN
       }
@@ -76,8 +77,9 @@ const getDeployment = async env => {
     deploymentUid,
     deploymentUrl
   } = await getDeployment(env);
-  env.DEPLOYMENT_URL = `https://vercel.com/api/file-tree/${deploymentUrl}?base=out`;
-  env.DEPLOYMENT_FILE_URL = `https://vercel.com/api/v6/deployments/${deploymentUid}/files/outputs?file=`;
+  env.deploymentUid = deploymentUid;
+  env.DEPLOYMENT_URL_SHORT = `https://vercel.com/api/file-tree/${deploymentUrl}?base=`;
+  env.DEPLOYMENT_URL = `https://vercel.com/api/file-tree/${deploymentUrl}?base=src`;
   env.OUTPUT_DIRECTORY = (await (0, _prompts.promptForOutputDirectory)()) || env.OUTPUT_DIRECTORY;
   console.log(_colors.default.yellow('Starting the process of recreating the structure...'));
   const getDeploymentStructureURL = (0, _utils.appendTeamId)(env.DEPLOYMENT_URL, env.TEAM_ID, '&');
@@ -90,8 +92,9 @@ const getDeployment = async env => {
         Authorization: env.AUTHORIZATION_TOKEN
       }
     });
+    console.log(data);
     (0, _mkdirp.default)(env.OUTPUT_DIRECTORY);
-    (0, _utils.parseStructure)(data, env.OUTPUT_DIRECTORY, env);
+    await (0, _utils.startDownload)("src", env, env.OUTPUT_DIRECTORY);
   } catch (err) {
     console.log(err.message);
     console.log(_colors.default.red('Cannot recreate the file tree. Please raise an issue here: https://github.com/CalinaCristian/source-from-vercel-deployment/issues !'));
